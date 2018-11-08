@@ -1,20 +1,19 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ScreenService } from '../shared/_services/screen.service';
 import { Subscription } from 'rxjs';
-import { ScreenService } from './shared/_services/screen.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: 'app-welcome',
+  templateUrl: './welcome.component.html',
+  styleUrls: ['./welcome.component.scss']
 })
-export class AppComponent implements OnInit, OnDestroy {
-  title = 'ng-material';
+export class WelcomeComponent implements OnInit, OnDestroy {
   screen$: Subscription;
-  isDesktop = false;
+  isDesktop: boolean;
 
   constructor(private screenSvc: ScreenService) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.screen$ = this.screenSvc
       .getDeviceSize()
       .subscribe(

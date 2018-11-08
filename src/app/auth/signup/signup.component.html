@@ -1,0 +1,24 @@
+<section class="signup-form">
+  <form novalidate [formGroup]="signupForm">
+    <mat-form-field>
+      <input type="email" matInput placeholder="email" formControlName="email" autocomplete="email" required>
+      <mat-hint>email@email.com</mat-hint>
+      <mat-error *ngIf="signupForm.controls['email'].hasError('required')">Email is required</mat-error>
+      <mat-error *ngIf="!signupForm.controls['email'].hasError('required')">Not a valid email</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input type="password" matInput placeholder="password" formControlName="password" required>
+      <mat-hint align="start">At least 6 characters</mat-hint>
+      <mat-hint align="end">{{ signupForm.controls['password'].value?.length }} / 6</mat-hint>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput [matDatepicker]="picker" placeholder="birthdate" formControlName="birthdate" required>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-checkbox color="primary" formControlName="terms" required>Agree to Terms and Conditions</mat-checkbox>
+    <div class="formActions">
+      <button mat-raised-button color="primary" (click)="onSubmit(signupForm)">Submit</button>
+    </div>
+  </form>
+</section>

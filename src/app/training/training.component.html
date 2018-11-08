@@ -1,0 +1,9 @@
+<mat-tab-group *ngIf="!trainingSelected">
+  <mat-tab label="New Training">
+    <app-new-training [isDesktop]="isDesktop" (startTraining)="setSelectedTraining($event)"></app-new-training>
+  </mat-tab>
+  <mat-tab label="Past Training">
+    <app-past-training [dataSource]="dataSource"></app-past-training>
+  </mat-tab>
+</mat-tab-group>
+<app-current-training [isDesktop]="isDesktop" [selectedTraining]="trainingSelected" *ngIf="trainingSelected" (trainingExit)="onStopTraining($event)"></app-current-training>

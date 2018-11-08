@@ -1,0 +1,7 @@
+.filter {
+  width: 100%;
+  display: flex;
+  &__field {
+    flex: 1;
+  }
+}

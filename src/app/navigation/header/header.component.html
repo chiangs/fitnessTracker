@@ -1,0 +1,24 @@
+<mat-toolbar color="primary">
+  <div class="menu__toggle" *ngIf="!isDesktop">
+    <button mat-icon-button (click)="onToggleSideNav()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+  <div class="menu__logo" [routerLink]="['']">Logo</div>
+  <div class="menu__links">
+    <ul class="link__list" *ngIf="isDesktop">
+      <li *ngIf="!isAuth">
+        <a class="link" [routerLink]="['signup']">Signup</a>
+      </li>
+      <li *ngIf="!isAuth">
+        <a class="link" [routerLink]="['login']">Login</a>
+      </li>
+      <li *ngIf="isAuth">
+        <a class="link" [routerLink]="['training']">Training</a>
+      </li>
+      <li *ngIf="isAuth">
+        <a class="link" (click)="onLogout()">Logout</a>
+      </li>
+    </ul>
+  </div>
+</mat-toolbar>

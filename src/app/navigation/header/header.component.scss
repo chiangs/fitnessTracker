@@ -1,0 +1,15 @@
+.menu {
+  &__links {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.link__list {
+  display: flex;
+  list-style-type: none;
+  li {
+    margin: 0 10px;
+  }
+}
