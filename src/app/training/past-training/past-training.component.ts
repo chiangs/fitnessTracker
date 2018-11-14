@@ -5,7 +5,7 @@ import {
   ViewChild,
   AfterViewInit
 } from '@angular/core';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { IExercise } from '../_interfaces/exercise.interface';
 
 @Component({
@@ -23,14 +23,20 @@ export class PastTrainingComponent implements OnInit, AfterViewInit {
     'calories',
     'state'
   ];
+  pageSize = 1;
+  pageSizeOptions = [1, 5, 10, 20];
+
   @ViewChild(MatSort)
   sort: MatSort;
   constructor() {}
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   ngOnInit() {}
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
   filter(filterValue: string): void {
