@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ScreenService } from '../shared/_services/screen.service';
-import { Subscription } from 'rxjs';
-import { TrainingService } from './_services/training.service';
-import { IExercise } from './_interfaces/exercise.interface';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
+import { Subscription } from 'rxjs';
+import { ScreenService } from '../shared/_services/screen.service';
+import { IExercise } from './_interfaces/exercise.interface';
+import { TrainingService } from './_services/training.service';
 
 @Component({
   selector: 'app-training',
@@ -13,9 +13,11 @@ import { MatTableDataSource } from '@angular/material';
 export class TrainingComponent implements OnInit, OnDestroy {
   screen$: Subscription;
   exercise$: Subscription;
-  pastTraining$: Subscription;
+  exercises$: Subscription;
+  finishedExercises$: Subscription;
   isDesktop: boolean;
   trainingSelected: IExercise;
+  exercises: IExercise[];
   dataSource = new MatTableDataSource<IExercise>();
 
   constructor(
@@ -24,6 +26,8 @@ export class TrainingComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.trainingSvc.fetchExercises();
+    this.trainingSvc.fetchPastExercises();
     this.screen$ = this.screenSvc
       .getDeviceSize()
       .subscribe(
@@ -34,14 +38,19 @@ export class TrainingComponent implements OnInit, OnDestroy {
     this.exercise$ = this.trainingSvc.exerciseChanged.subscribe(
       exercise => (this.trainingSelected = !!exercise ? exercise : null)
     );
-    this.pastTraining$ = this.trainingSvc.pastExercisesChanged.subscribe(
-      pastExercises => (this.dataSource.data = pastExercises)
+    this.exercises$ = this.trainingSvc.exercisesChanged.subscribe(
+      exercises => (this.exercises = exercises)
+    );
+    this.finishedExercises$ = this.trainingSvc.finishedExercisesChanged.subscribe(
+      finishedExercises => (this.dataSource.data = finishedExercises)
     );
   }
 
   ngOnDestroy(): void {
     this.screen$.unsubscribe();
     this.exercise$.unsubscribe();
+    this.exercises$.unsubscribe();
+    this.finishedExercises$.unsubscribe();
   }
 
   setSelectedTraining(event: any): void {

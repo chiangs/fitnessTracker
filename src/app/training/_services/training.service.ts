@@ -1,30 +1,43 @@
 import { Injectable } from '@angular/core';
-import { IExercise } from '../_interfaces/exercise.interface';
+import { AngularFirestore } from 'angularfire2/firestore';
 import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { IExercise } from '../_interfaces/exercise.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TrainingService {
   exerciseChanged = new Subject<IExercise>();
-  pastExercisesChanged = new Subject<IExercise[]>();
-  private availableExercise: IExercise[] = [
-    { id: 'pushups', name: 'Pushups', duration: 30, calories: 8 },
-    { id: 'situps', name: 'Situps', duration: 180, calories: 15 },
-    { id: 'burpees', name: 'Burpees', duration: 120, calories: 18 },
-    { id: 'body destroyer', name: 'Body Destroyer', duration: 60, calories: 8 }
-  ];
+  exercisesChanged = new Subject<IExercise[]>();
+  finishedExercisesChanged = new Subject<IExercise[]>();
+  private availableExercises: IExercise[];
   private runningExercise: IExercise;
-  private exercises: IExercise[] = [];
+  private finishedExercises: IExercise[] = [];
+  private availableExercisesCollection = 'availableExercises';
+  private finishedExercisesCollection = 'finishedExercises';
 
-  constructor() {}
+  constructor(private fireDB: AngularFirestore) {}
 
-  getExercises(): IExercise[] {
-    return this.availableExercise.slice();
+  fetchExercises(): void {
+    this.fireDB
+      .collection(this.availableExercisesCollection)
+      .snapshotChanges()
+      .pipe(
+        map(docArray => {
+          return docArray.map(doc => {
+            return this.mapExerciseData(doc);
+          });
+        })
+      )
+      .subscribe((exercises: IExercise[]) => {
+        this.availableExercises = exercises;
+        this.exercisesChanged.next([...this.availableExercises]);
+      });
   }
 
   startExercise(exerciseId: string): void {
-    const selectedExercise = this.availableExercise.find(
+    const selectedExercise = this.availableExercises.find(
       item => item.id === exerciseId
     );
     this.runningExercise = selectedExercise;
@@ -32,18 +45,18 @@ export class TrainingService {
   }
 
   completeExercise(): void {
-    this.exercises.push({
+    this.addExerciseToDB({
       ...this.runningExercise,
       date: new Date(),
       state: 'completed'
     });
     this.runningExercise = null;
     this.exerciseChanged.next(null);
-    this.pastExercisesChanged.next(this.exercises);
+    // this.finishedExercisesChanged.next(this.finishedExercises);
   }
 
   cancelExercise(progressMade: number): void {
-    this.exercises.push({
+    this.addExerciseToDB({
       ...this.runningExercise,
       duration: this.runningExercise.duration * (progressMade / 100),
       calories: this.runningExercise.calories * (progressMade / 100),
@@ -52,6 +65,30 @@ export class TrainingService {
     });
     this.runningExercise = null;
     this.exerciseChanged.next(null);
-    this.pastExercisesChanged.next(this.exercises);
+    // this.finishedExercisesChanged.next(this.finishedExercises);
+  }
+
+  fetchPastExercises() {
+    this.fireDB
+      .collection(this.finishedExercisesCollection)
+      .valueChanges()
+      .subscribe((exercises: IExercise[]) =>
+        this.finishedExercisesChanged.next(exercises)
+      );
+  }
+
+  private mapExerciseData(doc: any): IExercise {
+    return {
+      id: doc.payload.doc.id,
+      ...doc.payload.doc.data()
+    };
+  }
+
+  private addExerciseToDB(exercise: IExercise): void {
+    this.fireDB
+      .collection(this.finishedExercisesCollection)
+      .add(exercise)
+      .then()
+      .catch(error => console.log(error));
   }
 }
