@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ScreenService } from './shared/_services/screen.service';
+import { AuthService } from './auth/_services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -12,9 +13,10 @@ export class AppComponent implements OnInit, OnDestroy {
   screen$: Subscription;
   isDesktop = false;
 
-  constructor(private screenSvc: ScreenService) {}
+  constructor(private screenSvc: ScreenService, private authSvc: AuthService) {}
 
   ngOnInit(): void {
+    this.authSvc.initAuthListener();
     this.screen$ = this.screenSvc
       .getDeviceSize()
       .subscribe(
