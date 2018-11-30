@@ -4,7 +4,7 @@
       <mat-icon>menu</mat-icon>
     </button>
   </div>
-  <div class="menu__logo" [routerLink]="['']">Logo</div>
+  <div class="menu__logo" [routerLink]="['']">Ng Fitness</div>
   <div class="menu__links">
     <ul class="link__list" *ngIf="isDesktop">
       <li *ngIf="!isAuth">
@@ -16,9 +16,7 @@
       <li *ngIf="isAuth">
         <a class="link" [routerLink]="['training']">Training</a>
       </li>
-      <li *ngIf="isAuth">
-        <a class="link" (click)="onLogout()">Logout</a>
-      </li>
+      <li *ngIf="isAuth"><a class="link" (click)="onLogout()">Logout</a></li>
     </ul>
   </div>
 </mat-toolbar>

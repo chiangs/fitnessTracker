@@ -5,6 +5,8 @@ import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { TrainingService } from 'src/app/training/_services/training.service';
+import { MatSnackBar } from '@angular/material';
+import { UiService } from 'src/app/shared/_services/ui.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +19,9 @@ export class AuthService {
   constructor(
     private router: Router,
     private afAuth: AngularFireAuth,
-    private trainingSvc: TrainingService
+    private trainingSvc: TrainingService,
+    private snackbar: MatSnackBar,
+    private uiSvc: UiService
   ) {}
 
   initAuthListener() {
@@ -31,13 +35,17 @@ export class AuthService {
     //   userId: Math.round(Math.random() * 10000).toString(),
     //   email: authData.email
     // };
+    this.uiSvc.loadingStateChanged.next(true);
     this.afAuth.auth
       .createUserWithEmailAndPassword(authData.email, authData.password)
       .then(result => {
-        console.log(result);
+        this.uiSvc.loadingStateChanged.next(false);
         // this.authSuccess();
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        this.uiSvc.loadingStateChanged.next(false);
+        this.snackbar.open(error.message, null, { duration: 3000 });
+      });
   }
 
   login(authData: IAuthData) {
@@ -45,10 +53,14 @@ export class AuthService {
     //   userId: Math.round(Math.random() * 10000).toString(),
     //   email: authData.email
     // };
+    this.uiSvc.loadingStateChanged.next(true);
     this.afAuth.auth
       .signInWithEmailAndPassword(authData.email, authData.password)
-      .then(result => console.log(result))
-      .catch(error => console.log(error));
+      .then(result => this.uiSvc.loadingStateChanged.next(false))
+      .catch(error => {
+        this.uiSvc.loadingStateChanged.next(false);
+        this.snackbar.open(error.message, null, { duration: 3000 });
+      });
     // error obj can be used to render help
   }
 

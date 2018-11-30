@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IAuthData } from '../_interfaces/auth-data.interface';
 import { AuthService } from '../_services/auth.service';
+import { UiService } from 'src/app/shared/_services/ui.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   formGroupOptions = {
     email: ['', [Validators.required, Validators.email]],
@@ -24,12 +26,26 @@ export class LoginComponent implements OnInit {
   emailFormatError = `Please enter a valid email address`;
   emailRequiredError = `Email is required`;
   passwordError = 'This field is required';
+  isLoading = false;
+  private loadingSub: Subscription;
 
-  constructor(private fb: FormBuilder, private authSvc: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private authSvc: AuthService,
+    private uiSvc: UiService
+  ) {
     this.loginForm = this.fb.group(this.formGroupOptions);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loadingSub = this.uiSvc.loadingStateChanged.subscribe(
+      isLoading => (this.isLoading = isLoading)
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.loadingSub.unsubscribe();
+  }
 
   onSubmit({ value, valid }: { value: IAuthData; valid: boolean }): void {
     if (!this.loginForm.touched || !valid) {
