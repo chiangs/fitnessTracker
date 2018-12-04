@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
-import { IUser } from '../_interfaces/user.interface';
-import { IAuthData } from '../_interfaces/auth-data.interface';
-import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { TrainingService } from 'src/app/training/_services/training.service';
-import { MatSnackBar } from '@angular/material';
+import { Subject } from 'rxjs';
 import { UiService } from 'src/app/shared/_services/ui.service';
+import { TrainingService } from 'src/app/training/_services/training.service';
+import { IAuthData } from '../_interfaces/auth-data.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +18,7 @@ export class AuthService {
     private router: Router,
     private afAuth: AngularFireAuth,
     private trainingSvc: TrainingService,
-    private snackbar: MatSnackBar,
+    // private snackbar: MatSnackBar,
     private uiSvc: UiService
   ) {}
 
@@ -44,7 +42,8 @@ export class AuthService {
       })
       .catch(error => {
         this.uiSvc.loadingStateChanged.next(false);
-        this.snackbar.open(error.message, null, { duration: 3000 });
+        // this.snackbar.open(error.message, null, { duration: 3000 });
+        this.uiSvc.showSnackBar(error.message, null, { duration: 3000 });
       });
   }
 
@@ -59,7 +58,8 @@ export class AuthService {
       .then(result => this.uiSvc.loadingStateChanged.next(false))
       .catch(error => {
         this.uiSvc.loadingStateChanged.next(false);
-        this.snackbar.open(error.message, null, { duration: 3000 });
+        // this.snackbar.open( error.message, null, { duration: 3000 } );
+        this.uiSvc.showSnackBar(error.message, null, { duration: 3000 });
       });
     // error obj can be used to render help
   }

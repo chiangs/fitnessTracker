@@ -3,7 +3,7 @@
     <mat-card-title>Time to Start Workout</mat-card-title>
     <mat-card-content>
       <form novalidate [formGroup]="newTrainingForm">
-        <mat-form-field>
+        <mat-form-field *ngIf="exercises">
           <mat-select
             placeholder="Select training type"
             formControlName="trainingType"
@@ -19,7 +19,7 @@
         </mat-form-field>
       </form>
     </mat-card-content>
-    <mat-card-actions>
+    <mat-card-actions *ngIf="exercises">
       <button
         mat-button
         type="submit"
@@ -28,5 +28,6 @@
         Start
       </button>
     </mat-card-actions>
+    <mat-spinner *ngIf="!exercises"></mat-spinner>
   </mat-card>
 </section>
