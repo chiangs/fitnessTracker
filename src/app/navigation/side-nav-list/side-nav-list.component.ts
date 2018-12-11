@@ -28,7 +28,9 @@ export class SideNavListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.auth$.unsubscribe();
+    if (this.auth$) {
+      this.auth$.unsubscribe();
+    }
   }
 
   onLogout(): void {

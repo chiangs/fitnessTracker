@@ -11,6 +11,7 @@ import { TrainingService } from './_services/training.service';
   styleUrls: ['./training.component.scss']
 })
 export class TrainingComponent implements OnInit, OnDestroy {
+  subManager: Subscription = new Subscription();
   screen$: Subscription;
   exercise$: Subscription;
   exercises$: Subscription;
@@ -44,15 +45,15 @@ export class TrainingComponent implements OnInit, OnDestroy {
     this.finishedExercises$ = this.trainingSvc.finishedExercisesChanged.subscribe(
       finishedExercises => (this.dataSource.data = finishedExercises)
     );
+    this.subManager.add(this.screen$);
+    this.subManager.add(this.exercise$);
+    this.subManager.add(this.exercises$);
+    this.subManager.add(this.finishedExercises$);
   }
 
   ngOnDestroy(): void {
-    this.screen$.unsubscribe();
-    this.exercise$.unsubscribe();
-    this.exercises$.unsubscribe();
-    this.finishedExercises$.unsubscribe();
+    this.subManager.unsubscribe();
   }
-
   setSelectedTraining(event: any): void {
     this.trainingSvc.startExercise(event);
   }

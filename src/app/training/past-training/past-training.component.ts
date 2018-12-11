@@ -5,7 +5,12 @@ import {
   ViewChild,
   AfterViewInit
 } from '@angular/core';
-import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import {
+  MatTableDataSource,
+  MatSort,
+  MatPaginator,
+  PageEvent
+} from '@angular/material';
 import { IExercise } from '../_interfaces/exercise.interface';
 
 @Component({
@@ -25,6 +30,7 @@ export class PastTrainingComponent implements OnInit, AfterViewInit {
   ];
   pageSize = 1;
   pageSizeOptions = [1, 5, 10, 20];
+  pageEvent: PageEvent;
 
   @ViewChild(MatSort)
   sort: MatSort;
